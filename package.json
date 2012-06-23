@@ -1,0 +1,17 @@
+{
+  "name": "mux-demux",
+  "version": "0.0.0",
+  "description": "",
+  "homepage": "http://github.com/dominictarr/mux-demux",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dominictarr/mux-demux.git"
+  },
+  "dependencies": {
+    "remote-events": "1",
+    "browser-stream": "~0.1.10",
+    "event-stream": "~2.0.4"
+  },
+  "devDependencies": {},
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)"
+}

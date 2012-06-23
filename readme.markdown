@@ -33,4 +33,4 @@ net.createServer(function (con) {
 
 #API
 
-the API is identical to [browser-stream](http://github.com/dominictarr/browser-stream)
+the API is identical to [browser-stream](http://github.com/dominictarr/browser-stream#api)

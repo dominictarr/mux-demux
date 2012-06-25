@@ -8,10 +8,13 @@
     "url": "https://github.com/dominictarr/mux-demux.git"
   },
   "dependencies": {
-    "remote-events": "1",
-    "browser-stream": "~0.1.10",
-    "event-stream": "~2.0.4"
+    "event-stream": "~2.0.5"
   },
-  "devDependencies": {},
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "devDependencies": {
+    "assertions": "2.3"
+  },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)"
 }

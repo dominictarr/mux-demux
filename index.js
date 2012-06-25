@@ -33,8 +33,9 @@ function MuxDemux () {
   md.once('close', function () {
     var err = new Error ('unexpected disconnection')
     for (var i in streams) {
-      streams[i].emit('error', err)
-      streams[i].destroy()
+      var s = streams[i]
+      s.emit('error', err)
+      s.destroy()
     } 
   })
 
@@ -44,7 +45,7 @@ function MuxDemux () {
         throw new Error('stream is not writable')
       md.emit('data', [s.id, 'data', data])
     }, function () {
-      md.emit('data', [s.id, 'end'])
+      md.emit('data', [s.id, 'end']) 
     })
     s.pause = function () {
       md.emit('data', [s.id, 'pause'])

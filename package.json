@@ -8,7 +8,7 @@
     "url": "https://github.com/dominictarr/mux-demux.git"
   },
   "dependencies": {
-    "event-stream": "~2.0.5"
+    "event-stream": "~2.0.6"
   },
   "scripts": {
     "test": "tap test/*.js"

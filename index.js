@@ -26,9 +26,11 @@ function MuxDemux () {
       s.paused = false
       if(p) s.emit('drain')
     }
-    else 
+    else {
       s.emit.apply(s, data)
+    }
   })
+
 
   md.once('close', function () {
     var err = new Error ('unexpected disconnection')
@@ -54,6 +56,7 @@ function MuxDemux () {
       md.emit('data', [s.id, 'resume'])
     } 
     s.once('close', function () {
+      md.emit('data', [s.id, 'close'])
       delete streams[id]
     })
     streams[s.id = id] = s
@@ -61,14 +64,21 @@ function MuxDemux () {
     return s 
   }
 
-  md.createStream = function (meta) {
+  var outer = es.connect(es.split(), es.parse(), md, es.stringify())
+  if(md !== outer)
+    md.on('connection', function (stream) {
+      outer.emit('connection', stream)
+    })
+
+  outer.createStream = function (meta) {
     var s = createStream(createID(), meta)
     md.emit('data', [s.id, 'new', meta]) 
     return s
   }
-  md.createWriteStream = md.createStream
-  md.createReadStream = md.createStream
-  return md
+  outer.createWriteStream = outer.createStream
+  outer.createReadStream = outer.createStream
+
+  return outer
 }
 
 module.exports = MuxDemux

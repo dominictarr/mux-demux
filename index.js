@@ -17,7 +17,7 @@ function MuxDemux () {
     if(!s) {
       if(event != 'new')
         return md.emit('error', new Error('does not have stream:' + id))
-      md.emit('connection', createStream(id, data[1]))
+      md.emit('connection', createStream(id, data[1].meta, data[1].opts))
     } 
     else if (event === 'pause')
       s.paused = true
@@ -41,7 +41,7 @@ function MuxDemux () {
     } 
   })
 
-  function createStream(id, meta) {
+  function createStream(id, meta, opts) {
     var s = es.through(function (data) {
       if(!this.writable)
         throw new Error('stream is not writable')
@@ -59,6 +59,8 @@ function MuxDemux () {
       md.emit('data', [s.id, 'close'])
       delete streams[id]
     })
+    s.writable = opts.writable
+    s.readable = opts.readable
     streams[s.id = id] = s
     s.meta = meta
     return s 
@@ -70,13 +72,19 @@ function MuxDemux () {
       outer.emit('connection', stream)
     })
 
-  outer.createStream = function (meta) {
-    var s = createStream(createID(), meta)
-    md.emit('data', [s.id, 'new', meta]) 
+  outer.createStream = function (meta, opts) {
+    opts = opts || {writable: true, readable: true}
+    var s = createStream(createID(), meta, opts)
+    var _opts = {writable: opts.readable, readable: opts.writable}
+    md.emit('data', [s.id, 'new', {meta: meta, opts: _opts}]) 
     return s
   }
-  outer.createWriteStream = outer.createStream
-  outer.createReadStream = outer.createStream
+  outer.createWriteStream = function (meta) {
+    return outer.createStream(meta, {writable: true, readable: false})
+  }
+  outer.createReadStream = function (meta) {
+    return outer.createStream(meta, {writable: false, readable: true})
+  }
 
   return outer
 }

@@ -1,6 +1,6 @@
 var es = require('event-stream')
 
-function MuxDemux () {
+function MuxDemux (name) {
 
   function createID() {
     return (
@@ -31,15 +31,25 @@ function MuxDemux () {
     }
   })
 
-
-  md.once('close', function () {
-    var err = new Error ('unexpected disconnection')
+  function destroyAll (_err) {
+    md.removeListener('end', destroyAll) 
+    md.removeListener('error', destroyAll) 
+    md.removeListener('close', destroyAll) 
+    var err = _err || new Error ('unexpected disconnection')
     for (var i in streams) {
       var s = streams[i]
       s.emit('error', err)
       s.destroy()
-    } 
-  })
+    }
+  }
+
+
+  //the problem here, is that this is registering the first
+  //event listener.
+  //and so in this test, the close message is 
+  //getting to the other side first
+ md.pause = function () {}
+  md.resume = function () {}
 
   function createStream(id, meta, opts) {
     var s = es.through(function (data) {
@@ -67,10 +77,20 @@ function MuxDemux () {
   }
 
   var outer = es.connect(es.split(), es.parse(), md, es.stringify())
+
   if(md !== outer)
     md.on('connection', function (stream) {
       outer.emit('connection', stream)
     })
+
+  var pipe = outer.pipe
+  outer.pipe = function (dest, opts) {
+    pipe.call(outer, dest, opts)
+    md.on('end', destroyAll)
+    md.on('close', destroyAll)
+    md.on('error', destroyAll) 
+    return dest
+  }
 
   outer.createStream = function (meta, opts) {
     opts = opts || {writable: true, readable: true}

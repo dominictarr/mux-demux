@@ -1,7 +1,9 @@
 var MuxDemux = require('..')
-var net = require('net')
+var http = require('http')
+var request = require('request')
 
-net.createServer(function (con) {
+
+http.createServer(function (req, res) {
 
   var mdm2 = MuxDemux()
   mdm2.on('connection', function (stream) {
@@ -9,12 +11,12 @@ net.createServer(function (con) {
       console.log(date)
     })
   })
-  con.pipe(mdm2).pipe(con)
+  req.pipe(mdm2).pipe(res)
 
 }).listen(8642, function () {
 
   var mdm1 = MuxDemux()
-  var con = net.connect(8642)
+  var con = request({uri: 'http://localhost:8642', method: 'POST'})
   con.pipe(mdm1).pipe(con)
   var ds = mdm1.createWriteStream('times')
 

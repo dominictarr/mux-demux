@@ -1,6 +1,6 @@
 var es = require('event-stream')
 
-function MuxDemux (name) {
+function MuxDemux (opts) {
 
   function createID() {
     return (
@@ -38,8 +38,12 @@ function MuxDemux (name) {
     var err = _err || new Error ('unexpected disconnection')
     for (var i in streams) {
       var s = streams[i]
-      s.emit('error', err)
-      s.destroy()
+      if (opts && opts.error === false) {
+        s.end()
+      } else {
+        s.emit('error', err)
+        s.destroy() 
+      }
     }
   }
 

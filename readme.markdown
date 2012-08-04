@@ -53,6 +53,16 @@ client.createStream(meta)
 there is actually no distinction between clients and servers.
 if both sides are listening `on('connection',...)` then both sides may call `create{Write,Read,}Stream(meta)` and initiate new streams.
 
+### MuxDemux(options)
+
+Creates a MuxDemux stream. Optionally pass in an options hash 
+
+    {
+        error: Boolean
+    }
+
+If the error option is set to false then MuxDemux won't emit errors on the streams on unexpected disconnects and instead just end those streams
+
 ### createReadStream (meta)
 
 open a `ReadableStream` from the other side.

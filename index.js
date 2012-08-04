@@ -1,6 +1,6 @@
 var es = require('event-stream')
 
-function MuxDemux (name) {
+function MuxDemux (opts) {
 
   function createID() {
     return (
@@ -32,14 +32,18 @@ function MuxDemux (name) {
   })
 
   function destroyAll (_err) {
-    md.removeListener('end', destroyAll) 
-    md.removeListener('error', destroyAll) 
-    md.removeListener('close', destroyAll) 
+    md.removeListener('end', destroyAll)
+    md.removeListener('error', destroyAll)
+    md.removeListener('close', destroyAll)
     var err = _err || new Error ('unexpected disconnection')
     for (var i in streams) {
       var s = streams[i]
-      s.emit('error', err)
-      s.destroy()
+      if (opts && opts.error === false) {
+        s.end()
+      } else {
+        s.emit('error', err)
+        s.destroy()
+      }
     }
   }
 
@@ -57,14 +61,14 @@ function MuxDemux (name) {
         throw new Error('stream is not writable')
       md.emit('data', [s.id, 'data', data])
     }, function () {
-      md.emit('data', [s.id, 'end']) 
+      md.emit('data', [s.id, 'end'])
     })
     s.pause = function () {
       md.emit('data', [s.id, 'pause'])
     }
     s.resume = function () {
       md.emit('data', [s.id, 'resume'])
-    } 
+    }
     s.once('close', function () {
       md.emit('data', [s.id, 'close'])
       delete streams[id]
@@ -73,7 +77,7 @@ function MuxDemux (name) {
     s.readable = opts.readable
     streams[s.id = id] = s
     s.meta = meta
-    return s 
+    return s
   }
 
   var outer = es.connect(es.split(), es.parse(), md, es.stringify())
@@ -88,7 +92,7 @@ function MuxDemux (name) {
     pipe.call(outer, dest, opts)
     md.on('end', destroyAll)
     md.on('close', destroyAll)
-    md.on('error', destroyAll) 
+    md.on('error', destroyAll)
     return dest
   }
 
@@ -96,7 +100,7 @@ function MuxDemux (name) {
     opts = opts || {writable: true, readable: true}
     var s = createStream(createID(), meta, opts)
     var _opts = {writable: opts.readable, readable: opts.writable}
-    md.emit('data', [s.id, 'new', {meta: meta, opts: _opts}]) 
+    md.emit('data', [s.id, 'new', {meta: meta, opts: _opts}])
     return s
   }
   outer.createWriteStream = function (meta) {

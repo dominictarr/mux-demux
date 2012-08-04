@@ -14,7 +14,8 @@
     "test": "tap test/*.js"
   },
   "devDependencies": {
-    "assertions": "2.3"
+    "assertions": "2.3",
+    "tap": "~0.3.0"
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
   "optionalDependencies": {},

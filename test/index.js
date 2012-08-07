@@ -19,14 +19,13 @@ B.on('connection', function (hi) {
 
 A.pipe(B).pipe(A)
 
-var hi = A.createStream({name: 'hello'})
+var hi = A.createStream({name: 'hello'}, {allowHalfOpen: true})
 
 hi.write('whatever')
 
 a.ok(connected)
 
 hi.on('close', function eee () {
-  console.log('CLISED!!!')
   closed = true
 })
 
@@ -40,8 +39,6 @@ a.equal(hi.readable, false)
 
 hi.on('close', function () { console.log('HI CLOSE') })
 _hi.on('close', function () { console.log('_HI CLOSE') })
-
-console.log('BIG END')
 
 A.end()
 

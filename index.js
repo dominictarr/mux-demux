@@ -1,6 +1,8 @@
 var es = require('event-stream')
 
 function MuxDemux (opts) {
+  if('function' === typeof opts)
+    opts = {wrapper: opts}
 
   function createID() {
     return (
@@ -83,7 +85,10 @@ function MuxDemux (opts) {
     return s
   }
 
-  var outer = es.connect(es.split(), es.parse(), md, es.stringify())
+  var outer = (
+    opts && opts.wrapper ? opts.wrapper(md) :
+    es.pipeline(es.split(), es.parse(), md, es.stringify())
+  )
 
   if(md !== outer)
     md.on('connection', function (stream) {

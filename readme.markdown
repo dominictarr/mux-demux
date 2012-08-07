@@ -58,10 +58,15 @@ if both sides are listening `on('connection',...)` then both sides may call `cre
 Creates a MuxDemux stream. Optionally pass in an options hash 
 
     {
-        error: Boolean
+        error: Boolean,
+        wrapper: function (stream) {...}
     }
 
 If the error option is set to false then MuxDemux won't emit errors on the streams on unexpected disconnects and instead just end those streams
+
+`wrapper` be used to change the serialization format used by `mux-demux`,
+by default, line seperated json is used. see examples [below](#wrapper_examples)
+both mux-demux end points must use the same wrapper.
 
 ### createReadStream (meta)
 
@@ -82,3 +87,23 @@ returns a `Stream`, the other side will emit a `Stream` connected to this stream
 > note to self, references to a class (`Stream`) should be capitalized, and in backticks.
 > references to an instance should be lowercase, and not in backticks unless refuring to
 > a specific variable in a code example.
+
+### Wrapper Examples
+
+A stream of plain old js objects.
+
+``` js
+new MuxDemux(function (stream) { return stream })
+```
+
+A stream of msgpack.
+
+``` js
+var es = require('event-stream')
+var ms = require('msgpack-stream')
+
+new MuxDemux(function (stream) { 
+  return es.pipeline(ms.createDecodeStream(), stream, ms.createEncodeStream()) 
+})
+
+```

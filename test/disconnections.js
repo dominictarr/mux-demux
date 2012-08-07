@@ -9,6 +9,8 @@ var consistent = require('./consistent')
 var MuxDemux = require('..')
 var es = require('event-stream')
 
+module.exports = function (wrapper) {
+
 function randomNumberStream (max, count) {
   count = count || 20
   max   = max   || 10
@@ -203,3 +205,8 @@ console.log('disconnect2')
   })
 
 })();
+
+}
+
+if(!module.parent)
+  module.exports()

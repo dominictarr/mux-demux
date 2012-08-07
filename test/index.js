@@ -2,8 +2,10 @@ var a = require('assertions')
 var es = require('event-stream')
 var MuxDemux = require('..') 
 
-var A = new MuxDemux()
-var B = new MuxDemux()
+module.exports = function (wrapper) {
+
+var A = new MuxDemux(wrapper)
+var B = new MuxDemux(wrapper)
 
 var connected, closed, ended, _hi
 
@@ -44,3 +46,8 @@ A.end()
 
 a.ok(closed)
 a.ok(!ended)
+
+}
+
+if(!module.parent)
+  module.exports()

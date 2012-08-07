@@ -1,7 +1,7 @@
 var es = require('event-stream')
 var a  = require('assertions')
 
-module.exports = 
+module.exports =
 function consistent(test) {
   test = test || a.deepEqual
   var stream = es.through()
@@ -36,3 +36,4 @@ function consistent(test) {
   }
   return stream
 }
+

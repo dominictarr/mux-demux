@@ -61,10 +61,10 @@ function MuxDemux (opts) {
         throw new Error('stream is not writable')
       md.emit('data', [s.id, 'data', data])
     }, function () {
+      md.emit('data', [s.id, 'end'])
       if (this.readable && !opts.allowHalfOpen && !this.ended) {
         this.emit("end")
       }
-      md.emit('data', [s.id, 'end'])
     })
     s.pause = function () {
       md.emit('data', [s.id, 'pause'])
@@ -100,7 +100,9 @@ function MuxDemux (opts) {
   }
 
   outer.createStream = function (meta, opts) {
-    opts = opts || {writable: true, readable: true}
+    opts = opts || {}
+    if (!opts.writable && !opts.readable)
+      opts.readable = opts.writable = true
     var s = createStream(createID(), meta, opts)
     var _opts = {writable: opts.readable, readable: opts.writable}
     md.emit('data', [s.id, 'new', {meta: meta, opts: _opts}])

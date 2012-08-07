@@ -61,7 +61,7 @@ function MuxDemux (opts) {
         throw new Error('stream is not writable')
       md.emit('data', [s.id, 'data', data])
     }, function () {
-      if (this.readable) {
+      if (this.readable && !opts.allowHalfOpen) {
         this.emit("end")
       }
       md.emit('data', [s.id, 'end'])

@@ -17,6 +17,8 @@ function MuxDemux (opts) {
     var event = data[0]
     var s = streams[id]
     if(!s) {
+      if(event == 'close')
+        return
       if(event != 'new')
         return outer.emit('error', new Error('does not have stream:' + id))
       md.emit('connection', createStream(id, data[1].meta, data[1].opts))

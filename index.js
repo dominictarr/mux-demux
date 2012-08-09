@@ -60,7 +60,7 @@ function MuxDemux (opts) {
   function createStream(id, meta, opts) {
     var s = es.through(function (data) {
       if(!this.writable)
-        throw new Error('stream is not writable')
+        return outer.emit("error", Error('stream is not writable: ' + id))
       md.emit('data', [s.id, 'data', data])
     }, function () {
       md.emit('data', [s.id, 'end'])

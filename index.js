@@ -42,6 +42,7 @@ function MuxDemux (opts) {
     var err = _err || new Error ('unexpected disconnection')
     for (var i in streams) {
       var s = streams[i]
+      s.destroyed = true
       if (opts && opts.error === false) {
         s.end()
       } else {

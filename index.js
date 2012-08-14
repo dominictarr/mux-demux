@@ -30,6 +30,8 @@ function MuxDemux (opts) {
       s.paused = false
       if(p) s.emit('drain')
     }
+    else if (event === 'error')
+      s.emit('error', new Error(data[1]))
     else {
       s.emit.apply(s, data)
     }
@@ -75,6 +77,9 @@ function MuxDemux (opts) {
     }
     s.resume = function () {
       md.emit('data', [s.id, 'resume'])
+    }
+    s.error = function (message) {
+      md.emit('data', [s.id, 'error', message])
     }
     s.once('close', function () {
       md.emit('data', [s.id, 'close'])

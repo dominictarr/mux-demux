@@ -31,7 +31,7 @@ function MuxDemux (opts) {
       if(p) s.emit('drain')
     }
     else if (event === 'error')
-      s.emit('error', new Error(data[1]))
+      s.emit('error', data[1])
     else {
       s.emit.apply(s, data)
     }

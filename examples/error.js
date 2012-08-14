@@ -6,7 +6,7 @@ net.createServer(function (con) {
   var mdm2 = MuxDemux()
   mdm2.on('connection', function (stream) {
     stream.on('error', function (error) {
-      console.log(error.message)
+      console.log(error)
     })
   })
   con.pipe(mdm2).pipe(con)
@@ -19,7 +19,9 @@ net.createServer(function (con) {
   var es = mdm1.createWriteStream('errors')
 
   setInterval(function () {
-    es.error("error message as string")
+    es.error({
+        "any error": "message"
+    })
   }, 1e3)
 
 })

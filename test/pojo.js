@@ -4,3 +4,4 @@
 function id (stream) { return stream }
 require('./')(id)
 require('./disconnections')(id)
+require('./disconnections2')(id)

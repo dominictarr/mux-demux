@@ -27,8 +27,8 @@ function randomNumberStream (max, count) {
   var master = consistent()
   var slave = master.createSlave()
 
-  var client = new MuxDemux()
-  var server = new MuxDemux()
+  var client = new MuxDemux({error: true, wrapper: wrapper})
+  var server = new MuxDemux({error: true, wrapper: wrapper})
 
   client.pipe(server).pipe(client)
 
@@ -83,8 +83,8 @@ function randomNumberStream (max, count) {
 
 ;(function simple () {
 
-  var client = MuxDemux()
-  var server = MuxDemux()
+  var client = MuxDemux({error: true, wrapper: wrapper})
+  var server = MuxDemux({error: true, wrapper: wrapper})
 
   client.pipe(server).pipe(client)
 
@@ -107,8 +107,8 @@ function randomNumberStream (max, count) {
 
 ;(function disconnect () {
 
-  var client = MuxDemux()
-  var server = MuxDemux()
+  var client = MuxDemux({error: true, wrapper: wrapper})
+  var server = MuxDemux({error: true, wrapper: wrapper})
 
   client.pipe(server).pipe(client)
 
@@ -166,43 +166,6 @@ function randomNumberStream (max, count) {
   if(c.writable)
     c.write(rand())
   a.throws(function () { c.write(rand()) })
-
-})();
-
-
-;(function disconnect2 () {
-console.log('disconnect2')
-
-  var client = MuxDemux()
-  var server = MuxDemux()
-
-  client.pipe(server).pipe(client)
-
-  var randoms = []
-  function rand() {
-    var r
-    randoms.push(r = Math.random())
-    return r
-  }
-  var streams = 0
-  server.on('connection', function (s) {
-    s.write(rand())
-    s.write(rand())
-    s.write(rand())
-    s.write(rand())
-    s.end()
-    a.throws(function () { s.write(Math.random()) })//this should be ignored
-  })
-
-  c = client.createReadStream()
-  c.on('data', function (data) {
-    var r 
-    a.equal(data, r = randoms.shift())
-    console.log('data', r)
-  })
-  .on('end', function () {
-    console.log('end')
-  })
 
 })();
 

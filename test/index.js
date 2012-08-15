@@ -4,8 +4,8 @@ var MuxDemux = require('..')
 
 module.exports = function (wrapper) {
 
-var A = new MuxDemux(wrapper)
-var B = new MuxDemux(wrapper)
+var A = new MuxDemux({wrapper: wrapper})
+var B = new MuxDemux({wrapper: wrapper})
 
 var connected, closed, ended, _hi
 

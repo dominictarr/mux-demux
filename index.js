@@ -20,8 +20,8 @@ function MuxDemux (opts) {
     if(!s) {
       if(event == 'close')
         return
-      if(event != 'new')
-        return outer.emit('error', new Error('does not have stream:' + id))
+      if(event != 'new') 
+        return outer.emit('unknown', id)
       md.emit('connection', createStream(id, data[1].meta, data[1].opts))
     } 
     else if (event === 'pause')
@@ -55,6 +55,7 @@ function MuxDemux (opts) {
     var err = _err || new Error ('unexpected disconnection')
     for (var i in streams) {
       var s = streams[i]
+      s.destroyed = true
       if (opts && opts.error === false) {
         s.end()
       } else {

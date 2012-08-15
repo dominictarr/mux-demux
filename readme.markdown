@@ -7,13 +7,11 @@ var MuxDemux = require('..')
 var net = require('net')
 
 var mdm1 = MuxDemux()
-var mdm2 = MuxDemux()
 
-mdm2.on('connection', function (stream) {
-  stream.on('data', function (date) {
-    console.log(date)
+var mdm2 = 
+  MuxDemux(function (stream) {
+    stream.on('data', console.log.bind(console))
   })
-})
 
 net.createServer(function (con) {
   con.pipe(mdm2).pipe(con)
@@ -53,7 +51,7 @@ client.createStream(meta)
 there is actually no distinction between clients and servers.
 if both sides are listening `on('connection',...)` then both sides may call `create{Write,Read,}Stream(meta)` and initiate new streams.
 
-### MuxDemux(options)
+### MuxDemux(options, onConnection)
 
 Creates a MuxDemux stream. Optionally pass in an options hash 
 
@@ -62,11 +60,15 @@ Creates a MuxDemux stream. Optionally pass in an options hash
         wrapper: function (stream) {...}
     }
 
-If the error option is set to false then MuxDemux won't emit errors on the streams on unexpected disconnects and instead just end those streams
+If the error option is set to true  then MuxDemux will emit errors on the 
+streams on unexpected disconnects. othewise, it will just emit 'end' on those streams.
 
 `wrapper` be used to change the serialization format used by `mux-demux`,
 by default, line seperated json is used. see examples [below](#wrapper_examples)
 both mux-demux end points must use the same wrapper.
+
+`options` is optional. `MuxDemux(onConnection)` is a shortcut 
+for `MuxDemux().on('connection', onConnection)`
 
 ### createReadStream (meta)
 
@@ -93,7 +95,7 @@ returns a `Stream`, the other side will emit a `Stream` connected to this stream
 A stream of plain old js objects.
 
 ``` js
-new MuxDemux(function (stream) { return stream })
+new MuxDemux({wrapper: function (stream) { return stream } })
 ```
 
 A stream of msgpack.
@@ -102,8 +104,8 @@ A stream of msgpack.
 var es = require('event-stream')
 var ms = require('msgpack-stream')
 
-new MuxDemux(function (stream) { 
+new MuxDemux({wrapper: function (stream) { 
   return es.pipeline(ms.createDecodeStream(), stream, ms.createEncodeStream()) 
-})
+}})
 
 ```

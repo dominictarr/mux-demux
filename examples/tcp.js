@@ -3,13 +3,13 @@ var net = require('net')
 
 net.createServer(function (con) {
 
-  var mdm2 = MuxDemux()
-  mdm2.on('connection', function (stream) {
-    stream.on('data', function (date) {
-      console.log(date)
+  con.pipe(
+    MuxDemux(function (stream) {
+      stream.on('data', function (date) {
+        console.log(date)
+      })
     })
-  })
-  con.pipe(mdm2).pipe(con)
+  ).pipe(con)
 
 }).listen(8642, function () {
 

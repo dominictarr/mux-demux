@@ -1,3 +1,4 @@
+
 # MuxDemux
 
 multiplex-demultiplex object streams across _any_ text stream.
@@ -109,3 +110,9 @@ new MuxDemux({wrapper: function (stream) {
 }})
 
 ```
+
+### MuxDemuxStream#error
+
+there is one addition to the stream interface. call `stream.error(err)`
+will send an error that will be emitted at the other side of the stream.
+this is useful for sending 404 like messages to clients, etc.

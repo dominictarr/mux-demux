@@ -67,11 +67,7 @@ function MuxDemux (opts, onConnection) {
   }
 
 
-  //the problem here, is that this is registering the first
-  //event listener.
-  //and so in this test, the close message is 
-  //getting to the other side first
- md.pause = function () {}
+  md.pause = function () {}
   md.resume = function () {}
 
   function createStream(id, meta, opts) {
@@ -118,6 +114,14 @@ function MuxDemux (opts, onConnection) {
   if(onConnection)
     outer.on('connection', onConnection)
 
+  outer.on('connection', function (stream) {
+    //if mux-demux recieves a stream but there is nothing to handle it,
+    //then return an error to the other side.
+    //still trying to think of the best error message.
+    if(outer.listeners('connection').length === 1)
+      stream.error('remote end lacks connection listener')
+  })
+
   var pipe = outer.pipe
   outer.pipe = function (dest, opts) {
     pipe.call(outer, dest, opts)
@@ -147,3 +151,4 @@ function MuxDemux (opts, onConnection) {
 }
 
 module.exports = MuxDemux
+

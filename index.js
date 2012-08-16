@@ -1,4 +1,5 @@
 var es = require('event-stream')
+  , extend = require('xtend')
 
 function MuxDemux (opts, onConnection) {
   if('function' === typeof opts)
@@ -31,8 +32,18 @@ function MuxDemux (opts, onConnection) {
       s.paused = false
       if(p) s.emit('drain')
     }
-    else if (event === 'error')
-      s.emit('error', data[1])
+    else if (event === 'error') {
+      var error = data[1]
+      if (typeof error === 'string') {
+        s.emit('error', new Error(error))
+      } else if (typeof error.message === 'string') {
+        var e = new Error(error.message)
+        extend(e, error)
+        s.emit('error', e)
+      } else {
+        s.emit('error', error)
+      }
+    }
     else {
       s.emit.apply(s, data)
     }

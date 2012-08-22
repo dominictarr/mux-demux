@@ -1,5 +1,6 @@
 var es = require('event-stream')
   , extend = require('xtend')
+  , serializer = require('stream-serializer')
 
 function MuxDemux (opts, onConnection) {
   if('function' === typeof opts)
@@ -66,7 +67,6 @@ function MuxDemux (opts, onConnection) {
     }
   }
 
-
   md.pause = function () {}
   md.resume = function () {}
 
@@ -101,10 +101,7 @@ function MuxDemux (opts, onConnection) {
     return s
   }
 
-  var outer = (
-    opts && opts.wrapper ? opts.wrapper(md) :
-    es.pipeline(es.split(), es.parse(), md, es.stringify())
-  )
+  var outer = serializer(opts.wrapper)(md)
 
   if(md !== outer)
     md.on('connection', function (stream) {

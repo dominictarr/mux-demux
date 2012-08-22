@@ -1,7 +1,6 @@
 
 //test with stream of plain javascript objects
 
-function id (stream) { return stream }
-require('./')(id)
-require('./disconnections')(id)
-require('./disconnections2')(id)
+require('./')('raw')
+require('./disconnections')('raw')
+require('./disconnections2')('raw')

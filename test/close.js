@@ -5,15 +5,15 @@ var MuxDemux = require('..')
 
 exports.testClose = function (t) {
 
-var mx = MuxDemux(), ended = false
+  var mx = MuxDemux(), ended = false, callback = false
 
   mx.on('end', function () {
     ended = true
   })
 
-  console.log(mx)
-
-  mx.close() //end the mx stream after the sub-streams close.
+  mx.close(function () {
+    callback = true
+  }) //end the mx stream after the sub-streams close.
 
   var A = mx.createStream()
   var B = mx.createStream()
@@ -25,10 +25,13 @@ var mx = MuxDemux(), ended = false
   B.end()
 
   a.equal(ended, false)
+  a.equal(callback, false)
 
   C.end()
 
   a.equal(ended, true)
+
+  a.equal(callback, true)
 
   t.end()
 

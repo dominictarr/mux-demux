@@ -1,3 +1,5 @@
+'use strict';
+
 var es = require('event-stream')
   , extend = require('xtend')
   , serializer = require('stream-serializer')
@@ -67,10 +69,14 @@ function MuxDemux (opts, onConnection) {
     }
   }
 
+  //end the stream once sub-streams have ended.
+  //(waits for them to close, like on a tcp server)
+
   md.pause = function () {}
   md.resume = function () {}
 
   function createStream(id, meta, opts) {
+    streamCount ++
     var s = es.through(function (data) {
       if(!this.writable)
         return outer.emit("error", Error('stream is not writable: ' + id))
@@ -91,8 +97,11 @@ function MuxDemux (opts, onConnection) {
       md.emit('data', [s.id, 'error', message])
     }
     s.once('close', function () {
-      md.emit('data', [s.id, 'close'])
       delete streams[id]
+      streamCount --
+      md.emit('data', [s.id, 'close'])
+      if(streamCount === 0)
+        md.emit('zero')
     })
     s.writable = opts.writable
     s.readable = opts.readable
@@ -108,7 +117,14 @@ function MuxDemux (opts, onConnection) {
       outer.emit('connection', stream)
     })
 
-  if(onConnection)
+  outer.close = function () {
+    md.once('zero', function () {
+      md.emit('end')
+    })
+  }
+
+
+   if(onConnection)
     outer.on('connection', onConnection)
 
   outer.on('connection', function (stream) {

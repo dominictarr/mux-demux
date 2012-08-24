@@ -117,14 +117,14 @@ function MuxDemux (opts, onConnection) {
       outer.emit('connection', stream)
     })
 
-  outer.close = function () {
+  outer.close = function (cb) {
     md.once('zero', function () {
       md.emit('end')
+      if(cb) cb()
     })
   }
 
-
-   if(onConnection)
+  if(onConnection)
     outer.on('connection', onConnection)
 
   outer.on('connection', function (stream) {

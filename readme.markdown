@@ -91,6 +91,14 @@ returns a `Stream`, the other side will emit a `Stream` connected to this stream
 > references to an instance should be lowercase, and not in backticks unless refuring to
 > a specific variable in a code example.
 
+### close(cb)
+
+asks mux-demux to emit end once all the sub-streams have closed.
+this will wait untill they have ended, closed, or errored, just like 
+[`net.Server#close`](http://nodejs.org/api/net.html#net_server_close_cb).
+
+Takes an optional callback, and emits the 'end' event. 
+
 ### Wrapper Examples
 
 A stream of plain old js objects.

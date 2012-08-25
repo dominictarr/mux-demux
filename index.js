@@ -122,6 +122,7 @@ function MuxDemux (opts, onConnection) {
       md.emit('end')
       if(cb) cb()
     })
+    return this
   }
 
   if(onConnection)

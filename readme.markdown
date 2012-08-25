@@ -82,10 +82,14 @@ the other side of connection will emit a writable stream that is connected to th
 open a `WritableStream` to the other side.
 returns a `WritableStream`, the other side will emit a `ReadableStream` connected to this stream.
 
-### createStream (meta)
+### createStream (meta, opts)
 
 open a `Stream` to the other side which is both readable and writable.
 returns a `Stream`, the other side will emit a `Stream` connected to this stream.
+
+opts may be `{allowHalfOpen: true}`, if this is not set, the stream will emit
+`'end'` when `end()` is called. this may cause the stream to loose some data 
+from the other end. If `allowHalfOpen` is `true` then the remote end must call `end()`.
 
 > note to self, references to a class (`Stream`) should be capitalized, and in backticks.
 > references to an instance should be lowercase, and not in backticks unless refuring to

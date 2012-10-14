@@ -1,6 +1,6 @@
 'use strict';
 
-var es = require('event-stream')
+var through = require('through')
   , extend = require('xtend')
   , serializer = require('stream-serializer')
 
@@ -17,7 +17,7 @@ function MuxDemux (opts, onConnection) {
   }
 
   var streams = {}, streamCount = 0
-  var md = es.through(function (data) {
+  var md = through(function (data) {
     var id = data.shift()
     var event = data[0]
     var s = streams[id]
@@ -77,7 +77,7 @@ function MuxDemux (opts, onConnection) {
 
   function createStream(id, meta, opts) {
     streamCount ++
-    var s = es.through(function (data) {
+    var s = through(function (data) {
       if(!this.writable)
         return outer.emit("error", Error('stream is not writable: ' + id))
       md.emit('data', [s.id, 'data', data])

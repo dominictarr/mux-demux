@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "xtend": "~1.0.3",
-    "stream-serializer": "0.0.1",
+    "stream-serializer": "~0.0.3",
     "through": "~1.1.0"
   },
   "scripts": {

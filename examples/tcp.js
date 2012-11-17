@@ -1,21 +1,22 @@
 var MuxDemux = require('..')
 var net = require('net')
 
-net.createServer(function (con) {
+net.createServer(function (stream) {
 
-  con.pipe(
-    MuxDemux(function (stream) {
-      stream.on('data', function (date) {
+  stream.pipe(
+    MuxDemux(function (_stream) {
+      _stream.on('data', function (date) {
         console.log(date)
       })
     })
-  ).pipe(con)
+  ).pipe(stream)
 
 }).listen(8642, function () {
 
   var mdm1 = MuxDemux()
-  var con = net.connect(8642)
-  con.pipe(mdm1).pipe(con)
+  var stream = net.connect(8642)
+  stream.pipe(mdm1).pipe(stream)
+
   var ds = mdm1.createWriteStream('times')
 
   setInterval(function () {

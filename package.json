@@ -18,7 +18,8 @@
   "devDependencies": {
     "assertions": "2.3",
     "tap": "~0.3.0",
-    "event-stream": "~3.0.7"
+    "event-stream": "~3.0.7",
+    "msgpack-stream": "0.0.1"
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
   "optionalDependencies": {},

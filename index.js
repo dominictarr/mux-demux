@@ -2,6 +2,7 @@
 
 var through = require('through')
   , extend = require('xtend')
+  , duplex = require('duplex')
   , serializer = require('stream-serializer')
 
 function MuxDemux (opts, onConnection) {
@@ -17,17 +18,19 @@ function MuxDemux (opts, onConnection) {
   }
 
   var streams = {}, streamCount = 0
-  var md = through(function (data) {
+  var md = duplex().resume()
+
+  md.on('_data', function (data) {
     var id = data.shift()
     var event = data[0]
     var s = streams[id]
     if(!s) {
       if(event == 'close')
         return
-      if(event != 'new') 
+      if(event != 'new')
         return outer.emit('unknown', id)
       md.emit('connection', createStream(id, data[1].meta, data[1].opts))
-    } 
+    }
     else if (event === 'pause')
       s.paused = true
     else if (event === 'resume') {
@@ -72,9 +75,6 @@ function MuxDemux (opts, onConnection) {
   //end the stream once sub-streams have ended.
   //(waits for them to close, like on a tcp server)
 
-  md.pause = function () {}
-  md.resume = function () {}
-
   function createStream(id, meta, opts) {
     streamCount ++
     var s = through(function (data) {
@@ -83,27 +83,27 @@ function MuxDemux (opts, onConnection) {
         err.stream = this
         return outer.emit("error", err)
       }
-        
-      md.emit('data', [s.id, 'data', data])
+
+      md._data([s.id, 'data', data])
     }, function () {
-      md.emit('data', [s.id, 'end'])
+      md._data([s.id, 'end'])
       if (this.readable && !opts.allowHalfOpen && !this.ended) {
         this.emit("end")
       }
     })
     s.pause = function () {
-      md.emit('data', [s.id, 'pause'])
+      md._data([s.id, 'pause'])
     }
     s.resume = function () {
-      md.emit('data', [s.id, 'resume'])
+      md._data([s.id, 'resume'])
     }
     s.error = function (message) {
-      md.emit('data', [s.id, 'error', message])
+      md._data([s.id, 'error', message])
     }
     s.once('close', function () {
       delete streams[id]
       streamCount --
-      md.emit('data', [s.id, 'close'])
+      md._data([s.id, 'close'])
       if(streamCount === 0)
         md.emit('zero')
     })
@@ -123,7 +123,7 @@ function MuxDemux (opts, onConnection) {
 
   outer.close = function (cb) {
     md.once('zero', function () {
-      md.emit('end')
+      md._end()
       if(cb) cb()
     })
     return this
@@ -155,7 +155,7 @@ function MuxDemux (opts, onConnection) {
       opts.readable = opts.writable = true
     var s = createStream(createID(), meta, opts)
     var _opts = {writable: opts.readable, readable: opts.writable}
-    md.emit('data', [s.id, 'new', {meta: meta, opts: _opts}])
+    md._data([s.id, 'new', {meta: meta, opts: _opts}])
     return s
   }
   outer.createWriteStream = function (meta) {

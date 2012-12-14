@@ -77,41 +77,45 @@ function MuxDemux (opts, onConnection) {
 
   function createStream(id, meta, opts) {
     streamCount ++
-    var s = through(function (data) {
-      if(!this.writable) {
+    var d = duplex()
+    d.resume()
+
+    d.on('_data', function (data) {
+    if(!this.writable) {
         var err = Error('stream is not writable: ' + id)
         err.stream = this
         return outer.emit("error", err)
       }
 
-      md._data([s.id, 'data', data])
-    }, function () {
-      md._data([s.id, 'end'])
+      md._data([d.id, 'data', data])
+    })
+    d.on('_end', function () {
+      md._data([d.id, 'end'])
       if (this.readable && !opts.allowHalfOpen && !this.ended) {
         this.emit("end")
       }
     })
-    s.pause = function () {
-      md._data([s.id, 'pause'])
+    d.on('_pause', function () {
+      md._data([d.id, 'pause'])
+    })
+    d.on('_resume', function () {
+      md._data([d.id, 'resume'])
+    })
+    d.error = function (message) {
+      md._data([d.id, 'error', message])
     }
-    s.resume = function () {
-      md._data([s.id, 'resume'])
-    }
-    s.error = function (message) {
-      md._data([s.id, 'error', message])
-    }
-    s.once('close', function () {
+    d.once('close', function () {
       delete streams[id]
       streamCount --
-      md._data([s.id, 'close'])
+      md._data([d.id, 'close'])
       if(streamCount === 0)
         md.emit('zero')
     })
-    s.writable = opts.writable
-    s.readable = opts.readable
-    streams[s.id = id] = s
-    s.meta = meta
-    return s
+    d.writable = opts.writable
+    d.readable = opts.readable
+    streams[d.id = id] = d
+    d.meta = meta
+    return d
   }
 
   var outer = serializer(opts.wrapper)(md)

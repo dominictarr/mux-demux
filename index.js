@@ -21,6 +21,12 @@ function MuxDemux (opts, onConnection) {
   var md = duplex().resume()
 
   md.on('_data', function (data) {
+    if(!(Array.isArray(data)
+      && 'string' === typeof data[0]
+      && '__proto__' !== data[0]
+      && 'string' === typeof data[1]
+      && '__proto__' !== data[1]
+    )) return
     var id = data.shift()
     var event = data[0]
     var s = streams[id]

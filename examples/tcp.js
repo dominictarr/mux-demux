@@ -13,11 +13,10 @@ net.createServer(function (stream) {
 
 }).listen(8642, function () {
 
-  var mdm1 = MuxDemux()
-  var stream = net.connect(8642)
-  stream.pipe(mdm1).pipe(stream)
+  var stream = net.connect(8642), mx
+  stream.pipe(mx = MuxDemux).pipe(stream)
 
-  var ds = mdm1.createWriteStream('times')
+  var ds = mx.createWriteStream('times')
 
   setInterval(function () {
     ds.write(new Date().toString())

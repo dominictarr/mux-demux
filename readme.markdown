@@ -4,28 +4,23 @@
 multiplex-demultiplex object streams across _any_ text stream.
 
 ``` js
-var MuxDemux = require('..')
+var MuxDemux = require('mux-demux')
 var net = require('net')
 
-var mdm1 = MuxDemux()
-
-var mdm2 = 
-  MuxDemux(function (stream) {
-    stream.on('data', console.log.bind(console))
-  })
-
 net.createServer(function (con) {
-  con.pipe(mdm2).pipe(con)
+  con.pipe(MuxDemux(function (stream) {
+    stream.on('data', console.log.bind(console))
+  })).pipe(con)
 }).listen(8642, function () {
-  var con = net.connect(8642)
-  con.pipe(mdm1).pipe(con)
-  var ds = mdm1.createWriteStream('times')
+  var con = net.connect(8642), mx
+  con.pipe(mx = MuxDemux).pipe(con)
+
+  var ds = mx.createWriteStream('times')
 
   setInterval(function () {
     ds.write(new Date().toString())
   }, 1e3)
 })
-
 ```
 
 #API

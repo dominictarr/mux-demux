@@ -18,7 +18,7 @@ function MuxDemux (opts, onConnection) {
   }
 
   var streams = {}, streamCount = 0
-  var md = duplex().resume()
+  var md = duplex()//.resume()
 
   md.on('_data', function (data) {
     if(!(Array.isArray(data)
@@ -60,6 +60,10 @@ function MuxDemux (opts, onConnection) {
       s.emit.apply(s, data)
     }
   })
+  .on('_end', function () {
+    destroyAll()
+    md._end()
+  })
 
   function destroyAll (_err) {
     md.removeListener('end', destroyAll)
@@ -89,7 +93,6 @@ function MuxDemux (opts, onConnection) {
         err.stream = this
         return outer.emit("error", err)
       }
-
       md._data([s.id, 'data', data])
     }, function () {
       md._data([s.id, 'end'])
@@ -143,7 +146,8 @@ function MuxDemux (opts, onConnection) {
     //then return an error to the other side.
     //still trying to think of the best error message.
     if(outer.listeners('connection').length === 1)
-      stream.error('remote end lacks connection listener')
+      stream.error('remote end lacks connection listener ' 
+        + outer.listeners('connection').length)
   })
 
   var pipe = outer.pipe

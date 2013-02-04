@@ -1,9 +1,9 @@
 var es = require('event-stream')
-var a  = require('assertions')
+//var a  = require('assertions')
 
 module.exports =
-function consistent(test) {
-  test = test || a.deepEqual
+function consistent(a) {
+  //test = test || a.deepEqual
   var stream = es.through()
   var chunks = 0
   stream.on('data', function () {
@@ -16,11 +16,11 @@ function consistent(test) {
     })
     var slave = es.through()
     slave.on('data', function (data) {
-      a.greaterThan(expected.length, 0, 'slave stream did not expect write')
+      a.ok(expected.length > 0, 'slave stream did not expect write')
       a.equal(ended, false, 'slave expected stream not to have ended') 
       var next = expected.shift()
       count ++
-      test(next, data)
+      a.deepEqual(next, data)
     })
     //it's okay to pass data to end(data)
     //but never emit('end', data)

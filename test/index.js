@@ -1,8 +1,11 @@
-var a = require('assertions')
+//var a = require('assertions')
 var es = require('event-stream')
 var MuxDemux = require('..') 
 
+
 module.exports = function (wrapper) {
+
+require('tape')('simple test', function (a) {
 
 var A = new MuxDemux({wrapper: wrapper})
 var B = new MuxDemux({wrapper: wrapper})
@@ -25,27 +28,36 @@ var hi = A.createStream({name: 'hello'}, {allowHalfOpen: true})
 
 hi.write('whatever')
 
-a.ok(connected)
+//A.resume()
+//B.resume()
 
-hi.on('close', function eee () {
-  closed = true
+process.nextTick(function () {
+
+  a.ok(connected)
+
+  hi.on('close', function eee () {
+    closed = true
+  })
+
+  hi.end()
+  a.equal(hi.writable, false)
+  a.equal(_hi.readable, false)
+
+  _hi.end()
+  a.equal(_hi.writable, false)
+  a.equal(hi.readable, false)
+
+  hi.on('close', function () { console.log('HI CLOSE') })
+  _hi.on('close', function () { console.log('_HI CLOSE') })
+
+  A.end()
+
+  a.ok(closed)
+  a.ok(!ended)
+  a.end()
+
 })
-
-hi.end()
-a.equal(hi.writable, false)
-a.equal(_hi.readable, false)
-
-_hi.end()
-a.equal(_hi.writable, false)
-a.equal(hi.readable, false)
-
-hi.on('close', function () { console.log('HI CLOSE') })
-_hi.on('close', function () { console.log('_HI CLOSE') })
-
-A.end()
-
-a.ok(closed)
-a.ok(!ended)
+})
 
 }
 

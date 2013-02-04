@@ -1,9 +1,10 @@
 
-var a = require('assertions')
+//var a = require('assertions')
 var es = require('event-stream')
 var MuxDemux = require('..') 
+var test = require('tape')
 
-exports.testClose = function (t) {
+test('test close', function (a) {
 
   var mx = MuxDemux(), ended = false, callback = false
 
@@ -29,10 +30,9 @@ exports.testClose = function (t) {
 
   C.end()
 
-  a.equal(ended, true)
-
-  a.equal(callback, true)
-
-  t.end()
-
-}
+  process.nextTick(function () {
+    a.equal(ended, true)
+    a.equal(callback, true)
+    a.end()
+  })
+})

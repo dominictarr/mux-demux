@@ -1,8 +1,9 @@
 
-var a = require('assertions')
+//var a = require('assertions')
 var consistent = require('./consistent')
 var es = require('event-stream')
 var MuxDemux = require('..')
+var test = require('tape')
 
 /*
   socket.io behaves like two linked EventEmitters.
@@ -42,13 +43,13 @@ function randomNumberStream (max, count) {
   })
 }
 
-;(function simple () {
+test('simple test', function simple (a) {
 
   var p = pair()
   var server = p.pop()
   var client = p.pop()
 
-  var master = consistent()
+  var master = consistent(a)
   var slave  = master.createSlave()
 
   server.on('connection', function (stream) {
@@ -58,21 +59,27 @@ function randomNumberStream (max, count) {
   })
 
   randomNumberStream()
+    .on('end', onEnd)
     .pipe(master)
     .pipe(client.createWriteStream('simple'))
 
-  process.on('exit', slave.validate)
+  function onEnd() {
+    process.nextTick(function () {
+      slave.validate()
+      a.end()
+    })
+  }
 
-})();
+});
 
 //return
-;(function through () {
+test('through', function (a) {
 
   var p = pair()
   var server = p.shift()
   var client = p.shift()
 
-  var master = consistent()
+  var master = consistent(a)
   var slave1  = master.createSlave()
   var slave2  = master.createSlave()
 
@@ -89,23 +96,24 @@ function randomNumberStream (max, count) {
       slave1.validate()
       slave2.validate()
       console.log('slave 1,2 valid')
+      a.end()
     })
 
-})();
+});
 
 
 //  names do not have to be unique.
 //  should create two seperate streams.
 
 
-;(function double () {
+test('double', function (a) {
   var p = pair()
   var server = p.shift()
   var client = p.shift()
 
-  var master1 = consistent()
+  var master1 = consistent(a)
   var slave1  = master1.createSlave()
-  var master2 = consistent()
+  var master2 = consistent(a)
   var slave2  = master2.createSlave()
 
   server.on('connection', function (stream) {
@@ -130,8 +138,9 @@ function randomNumberStream (max, count) {
     .on('end', function () {
       slave2.validate()
       console.log('slave2 valid')
+      a.end()
     })
-})();
+});
 
 /*
   since I'm here, I may as well implement pausing
@@ -151,7 +160,7 @@ this case is pretty simple.
 */
 
 
-;(function passesPauseThrough(stream) {
+test('passes pause through2', function passesPauseThrough(a) {
   var p = pair()
   var server = p.pop()
   var client = p.pop()
@@ -170,6 +179,8 @@ this case is pretty simple.
 
   master = (client.createWriteStream('paused'))
 
+  process.nextTick(function () {
+
   a.equal(master.write('hello'), true, 'should be free')
   a.equal(master.write('paused now'), false, 'should be paused')
   a.equal(master.write('hello'), true, 'should be free2')
@@ -177,5 +188,11 @@ this case is pretty simple.
 
   master.end() 
   console.log('pause is correct')
-})();
+
+  process.nextTick(function () {
+    a.end()
+  })
+
+  })
+});
 

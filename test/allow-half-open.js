@@ -1,7 +1,7 @@
 var MuxDemux = require('..')
-var a = require('assertions')
+var test = require('tape')
 
-exports['allowHalfOpen=false by default'] = function (t) {
+test('allowHalfOpen=false by default', function (t) {
 
   var mx = MuxDemux(), emittedEnd = false
 
@@ -10,12 +10,12 @@ exports['allowHalfOpen=false by default'] = function (t) {
   })
   .end()
 
-  a.equal(emittedEnd, true)
+  t.equal(emittedEnd, true)
   t.end()
 
-}
+})
 
-exports['can set to true'] = function (t) {
+test('can set to true', function (t) {
 
   var mx = MuxDemux(), emittedEnd = false
 
@@ -24,8 +24,7 @@ exports['can set to true'] = function (t) {
   })
   .end()
 
-  a.equal(emittedEnd, false)
+  t.equal(emittedEnd, false)
   t.end()
 
-}
-
+})

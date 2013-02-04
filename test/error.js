@@ -4,6 +4,8 @@ var through  = require('event-stream').through
 
 //make a through stream that is delayed by one tick
 
+require('tape')(function (t) {
+
 function tick () {
   var stream
   return stream = through(function (data) {
@@ -28,9 +30,8 @@ var a = A.createStream('test')
   .on('error', function (err) {
     errored = true
     console.log('expected error:', err.message)
+    t.notEqual(err, null, 'expected an error')
+    t.end()
   })
 
-process.on('exit', function () {
-  if(!errored)
-    throw new Error('expecting error event')
 })

@@ -4,10 +4,10 @@
   on a disconnect, both streams should emit 'close'
 */
 
-var a = require('assertions')
 var consistent = require('./consistent')
 var MuxDemux = require('..')
 var es = require('event-stream')
+var test = require('tape')
 
 module.exports = function (wrapper) {
 
@@ -22,9 +22,9 @@ function randomNumberStream (max, count) {
   })
 }
 
-;(function () {
+test('disconnections 1', function (a) {
 
-  var master = consistent()
+  var master = consistent(a)
   var slave = master.createSlave()
 
   var client = new MuxDemux({error: true, wrapper: wrapper})
@@ -63,9 +63,7 @@ function randomNumberStream (max, count) {
     .pipe(es.log('>>'))
     .pipe(client.createWriteStream('disconnect1')
       .on('error', function () {rns.destroy(); console.log('>> ERROR')})
-      .on('end', function () {
-        //END should always be EMITTED
-        //RIGHT?
+      .on('close', function () {
         a.equal(count, dCount, 'each stream should see the same items')
         console.log('>> END')
       //not all the events are emitted, 
@@ -73,15 +71,17 @@ function randomNumberStream (max, count) {
       //and piping stops then they end up with 
       //the same data through them.
         slave.validate()
+        a.end()
       }))
+
   /*
   THERE are some problems with streams that close.
   or rather, SHOULD close.   
   */ 
  
-})();
+});
 
-;(function simple () {
+test('simple', function simple (a) {
 
   var client = MuxDemux({error: true, wrapper: wrapper})
   var server = MuxDemux({error: true, wrapper: wrapper})
@@ -96,6 +96,7 @@ function randomNumberStream (max, count) {
     })
     stream.on('end', function () {
       console.log('end')
+      a.end()
     })
   })
 
@@ -103,9 +104,9 @@ function randomNumberStream (max, count) {
   c.write(r1)
   c.end()
 
-})();
+});
 
-;(function disconnect () {
+test('disconnect', function disconnect (a) {
 
   var client = MuxDemux({error: true, wrapper: wrapper})
   var server = MuxDemux({error: true, wrapper: wrapper})
@@ -146,15 +147,17 @@ function randomNumberStream (max, count) {
       a.ok(!_ended, 'end MUST only be emitted once')
       _ended = true
       a.equal(streams, ++ ended)
-      console.log('end!')
+      console.log('end!!!!')
+//      a.end()
     })
   })
 
   var c = client.createWriteStream('A')
-  c.on('error', function () {
+  c.on('error', function (err) {
     //expecting this!
     clientErr = true
-    console.log('error')
+    console.log('>>>error', err)
+    a.end()
   })
 
   c.write(rand())
@@ -167,7 +170,7 @@ function randomNumberStream (max, count) {
     c.write(rand())
   a.throws(function () { c.write(rand()) })
 
-})();
+});
 
 }
 

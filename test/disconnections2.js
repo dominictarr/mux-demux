@@ -4,32 +4,22 @@
   on a disconnect, both streams should emit 'close'
 */
 
-var a = require('assertions')
+//var a = require('assertions')
 var consistent = require('./consistent')
 var MuxDemux = require('..')
 var es = require('event-stream')
+var test = require('tape')
 
 module.exports = function (wrapper) {
 
-function randomNumberStream (max, count) {
-  count = count || 20
-  max   = max   || 10
-  return es.readable(function (i, cb) {
-    this.emit('data', Math.random() * max)
-    if(i > count)
-    this.emit('end')
-    cb()
-  })
-}
-
-;(function disconnect2 () {
+test('disconnect 2', function (a) {
 console.log('disconnect2')
 
   var client = MuxDemux({error: true, wrapper: wrapper})
   var server = MuxDemux({error: true, wrapper: wrapper})
 
   client.pipe(server).pipe(client)
-
+//  server.pipe(process.stderr, {end: false})
   var randoms = []
   function rand() {
     var r
@@ -45,7 +35,7 @@ console.log('disconnect2')
     s.write(rand())
     console.log('END')    
     try {
-    s.end()
+      s.end()
     } catch (err) {
       console.error('END THREW')
       throw err
@@ -53,17 +43,20 @@ console.log('disconnect2')
     console.log('ENDED')    
   })
 
-  c = client.createReadStream()
+  c = client.createStream()
   c.on('data', function (data) {
     var r 
     a.equal(data, r = randoms.shift())
-    console.log('data', r)
+    console.log('data>>', r)
   })
   .on('end', function () {
-    console.log('end')
+    console.log('end>>')
+    a.end()
   })
 
-})();
+//  c.pipe(process.stderr, {end: false})
+
+});
 
 }
 

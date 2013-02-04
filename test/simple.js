@@ -26,8 +26,8 @@ var test = require('tape')
 
 
 function pair(f) {
-  var a = new MuxDemux()
-  var b = new MuxDemux()
+  var a = MuxDemux()
+  var b = MuxDemux()
   a.pipe(b).pipe(a)
   return [a, b]
 }

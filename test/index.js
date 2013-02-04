@@ -7,8 +7,8 @@ module.exports = function (wrapper) {
 
 require('tape')('simple test', function (a) {
 
-var A = new MuxDemux({wrapper: wrapper})
-var B = new MuxDemux({wrapper: wrapper})
+var A = MuxDemux({wrapper: wrapper})
+var B = MuxDemux({wrapper: wrapper})
 
 var connected, closed, ended, _hi
 

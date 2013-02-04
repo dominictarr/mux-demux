@@ -27,8 +27,8 @@ test('disconnections 1', function (a) {
   var master = consistent(a)
   var slave = master.createSlave()
 
-  var client = new MuxDemux({error: true, wrapper: wrapper})
-  var server = new MuxDemux({error: true, wrapper: wrapper})
+  var client = MuxDemux({error: true, wrapper: wrapper})
+  var server = MuxDemux({error: true, wrapper: wrapper})
 
   client.pipe(server).pipe(client)
 

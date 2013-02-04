@@ -1,6 +1,6 @@
 {
   "name": "mux-demux",
-  "version": "3.4.3",
+  "version": "3.5.0",
   "description": "",
   "homepage": "http://github.com/dominictarr/mux-demux",
   "repository": {
@@ -14,17 +14,15 @@
     "duplex": "~1.0.0"
   },
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "set -e; for t in test/*.js; do node $t; done"
   },
   "devDependencies": {
     "assertions": "2.3",
     "tap": "~0.3.0",
     "event-stream": "~3.0.7",
-    "msgpack-stream": "0.0.1"
+    "msgpack-stream": "0.0.1",
+    "asynct": "~1.1.0",
+    "tape": "~0.2.2"
   },
-  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
-  "optionalDependencies": {},
-  "engines": {
-    "node": "*"
-  }
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)"
 }

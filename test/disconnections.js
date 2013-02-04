@@ -120,11 +120,6 @@ test('disconnect', function disconnect (a) {
     return r
   }
   var clientErr = false, serverErr = false
-  process.on('exit', function () {
-    a.ok(clientErr, 'expected client to emit an error')
-    a.ok(serverErr, 'expected server to emit an error')
-    console.log('end point emitted errors correctly')
-  })
 
   var streams = 0, ended = 0
   server.on('connection', function (stream) {
@@ -139,7 +134,7 @@ test('disconnect', function disconnect (a) {
         //I'm expecting this
         serverErr = true
         a.equal(streams, 1)
-        console.log('error!')
+        next()
       })
     var r = Math.random()
     var _ended = false
@@ -156,9 +151,17 @@ test('disconnect', function disconnect (a) {
   c.on('error', function (err) {
     //expecting this!
     clientErr = true
-    console.log('>>>error', err)
-    a.end()
+    next()
   })
+
+  var n = 1
+  function next() {
+    if(n--) return
+    a.ok(clientErr, 'expected client to emit an error')
+    a.ok(serverErr, 'expected server to emit an error')
+    console.log('end point emitted errors correctly')
+    a.end()
+  }
 
   c.write(rand())
   c.write(rand())

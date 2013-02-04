@@ -1,7 +1,6 @@
 //var a = require('assertions')
 var es = require('event-stream')
-var MuxDemux = require('..') 
-
+var MuxDemux = require('../')
 
 module.exports = function (wrapper) {
 

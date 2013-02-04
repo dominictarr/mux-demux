@@ -1,4 +1,4 @@
-var MuxDemux = require('..')
+var MuxDemux = require('../')
 var test = require('tape')
 
 test('allowHalfOpen=false by default', function (t) {

@@ -1,7 +1,7 @@
 
 //var a = require('assertions')
 var es = require('event-stream')
-var MuxDemux = require('..') 
+var MuxDemux = require('../')
 var test = require('tape')
 
 test('test close', function (a) {

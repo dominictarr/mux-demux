@@ -2,7 +2,7 @@
 //var a = require('assertions')
 var consistent = require('./consistent')
 var es = require('event-stream')
-var MuxDemux = require('..')
+var MuxDemux = require('../')
 var test = require('tape')
 
 /*
@@ -181,17 +181,17 @@ test('passes pause through2', function passesPauseThrough(a) {
 
   process.nextTick(function () {
 
-  a.equal(master.write('hello'), true, 'should be free')
-  a.equal(master.write('paused now'), false, 'should be paused')
-  a.equal(master.write('hello'), true, 'should be free2')
-  a.equal(master.write('paused now'), false, 'should be paused')
+    a.equal(master.write('hello'), true, 'should be free')
+    a.equal(master.write('paused now'), false, 'should be paused')
+    a.equal(master.write('hello'), true, 'should be free2')
+    a.equal(master.write('paused now'), false, 'should be paused')
 
-  master.end() 
-  console.log('pause is correct')
+    master.end() 
+    console.log('pause is correct')
 
-  process.nextTick(function () {
-    a.end()
-  })
+    process.nextTick(function () {
+      a.end()
+    })
 
   })
 });

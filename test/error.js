@@ -1,5 +1,5 @@
 
-var MuxDemux = require('..')
+var MuxDemux = require('../')
 var through  = require('event-stream').through
 
 //make a through stream that is delayed by one tick

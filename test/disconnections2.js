@@ -6,7 +6,7 @@
 
 //var a = require('assertions')
 var consistent = require('./consistent')
-var MuxDemux = require('..')
+var MuxDemux = require('../')
 var es = require('event-stream')
 var test = require('tape')
 

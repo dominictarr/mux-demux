@@ -2,6 +2,12 @@
 
 multiplex-demultiplex object streams across _any_ text stream.
 
+## Stability
+
+Stable: Expect patches, possible features additions.
+
+## Example
+
 ``` js
 var MuxDemux = require('mux-demux')
 var net = require('net')
@@ -21,10 +27,6 @@ net.createServer(function (con) {
   }, 1e3)
 })
 ```
-
-## Stability
-
-Stable: Expect patches, possible features additions.
 
 ## Gotchas
 

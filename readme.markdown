@@ -1,4 +1,3 @@
-
 # MuxDemux
 
 multiplex-demultiplex object streams across _any_ text stream.
@@ -22,6 +21,10 @@ net.createServer(function (con) {
   }, 1e3)
 })
 ```
+
+## Stability
+
+Stable: Expect patches, possible features additions.
 
 ## Gotchas
 

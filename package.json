@@ -46,5 +46,6 @@
       ]
     }
   },
-  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)"
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
+  "stability": "stable"
 }

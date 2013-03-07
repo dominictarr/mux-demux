@@ -23,6 +23,30 @@ net.createServer(function (con) {
 })
 ```
 
+## Gotchas
+
+take care to create a `MuxDemux` instance per connection,
+do not connect many connections to one `MuxDemux'.
+
+### Right
+
+``` js
+net.createServer(function (stream) {
+  stream.pipe(MuxDemux(function (_stream) { 
+
+  }).pipe(stream)
+}).listen(port)
+```
+
+### WRONG!
+``` js
+var mx = MuxDemux()
+net.createServer(function (stream) {
+  //this will connect many streams to the OUTER MuxDemux Stream!
+  stream.pipe(mx).pipe(stream)
+}).listen(port)
+```
+
 #API
 
 the API [browser-stream](http://github.com/dominictarr/browser-stream#api)
@@ -30,18 +54,18 @@ the API [browser-stream](http://github.com/dominictarr/browser-stream#api)
 ``` js
 
 var MuxDemux = require('mux-demux')
-var client = MuxDemux()
-var server = MuxDemux()
+var a = MuxDemux()
+var b = MuxDemux()
 
-client.pipe(server).pipe(client)
+a.pipe(b).pipe(a)
 
-server.on('connection', function (stream) {
+b.on('connection', function (stream) {
   // inspect stream.meta to decide what this stream is.
 })
 
-client.createWriteStream(meta)
-client.createReadStream(meta)
-client.createStream(meta)
+a.createWriteStream(meta)
+a.createReadStream(meta)
+a.createStream(meta)
 
 ```
 there is actually no distinction between clients and servers.

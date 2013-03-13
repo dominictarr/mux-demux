@@ -87,7 +87,8 @@ test('simple', function simple (a) {
   var server = MuxDemux({error: true, wrapper: wrapper})
 
   client.pipe(server).pipe(client)
-
+  client.resume()
+  server.resume()
   var r1 = Math.random()
   server.on('connection', function (stream) {
     stream.on('data', function (data) {
@@ -106,74 +107,6 @@ test('simple', function simple (a) {
 
 });
 
-test('disconnect', function disconnect (a) {
-
-  var client = MuxDemux({error: true, wrapper: wrapper})
-  var server = MuxDemux({error: true, wrapper: wrapper})
-
-  client.pipe(server).pipe(client)
-
-  var randoms = []
-  function rand() {
-    var r
-    randoms.push(r = Math.random())
-    return r
-  }
-  var clientErr = false, serverErr = false
-
-  var streams = 0, ended = 0
-  server.on('connection', function (stream) {
-    streams ++
-    stream
-      .on('data', function (data) {
-        var r 
-        a.equal(data, r = randoms.shift())
-        console.log('data', r)
-      })
-      .on('error', function () {
-        //I'm expecting this
-        serverErr = true
-        a.equal(streams, 1)
-        next()
-      })
-    var r = Math.random()
-    var _ended = false
-    stream.on('end', function () {
-      a.ok(!_ended, 'end MUST only be emitted once')
-      _ended = true
-      a.equal(streams, ++ ended)
-      console.log('end!!!!')
-//      a.end()
-    })
-  })
-
-  var c = client.createWriteStream('A')
-  c.on('error', function (err) {
-    //expecting this!
-    clientErr = true
-    next()
-  })
-
-  var n = 1
-  function next() {
-    if(n--) return
-    a.ok(clientErr, 'expected client to emit an error')
-    a.ok(serverErr, 'expected server to emit an error')
-    console.log('end point emitted errors correctly')
-    a.end()
-  }
-
-  c.write(rand())
-  c.write(rand())
-  c.write(rand())
-  c.write(rand())
-  client.destroy()
-
-  if(c.writable)
-    c.write(rand())
-  a.throws(function () { c.write(rand()) })
-
-});
 
 }
 

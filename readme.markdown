@@ -2,6 +2,9 @@
 
 multiplex-demultiplex object streams across _any_ text stream.
 
+[![Build Status](https://travis-ci.org/dominictarr/mux-demux.png)]
+  (https://travis-ci.org/dominictarr/mux-demux)
+
 ## Stability
 
 Stable: Expect patches, possible features additions.

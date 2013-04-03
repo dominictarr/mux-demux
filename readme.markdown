@@ -55,6 +55,24 @@ net.createServer(function (stream) {
 }).listen(port)
 ```
 
+### Errors, and use in PRODUCTION
+
+`mux-demux` parses a `JSON` protocol, and so you must handle any errors
+that may result from someone connecting, and sending invalid data.
+
+``` js
+net.createServer(function (stream) {
+  var mx = MuxDemux()
+  stream.pipe(mx).pipe(stream)
+  mx.on('error', function () {
+    stream.destroy()
+  })
+  stream.on('error', function () {
+    mx.destroy()
+  })
+}).listen(9999)
+```
+
 #API
 
 the API [browser-stream](http://github.com/dominictarr/browser-stream#api)

@@ -1,6 +1,6 @@
 {
   "name": "mux-demux",
-  "version": "3.5.4",
+  "version": "3.5.5",
   "description": "",
   "homepage": "http://github.com/dominictarr/mux-demux",
   "repository": {
@@ -9,9 +9,10 @@
   },
   "dependencies": {
     "xtend": "~1.0.3",
-    "stream-serializer": "~0.0.3",
+    "stream-serializer": "~1.0.0",
     "through": "~2.1.0",
-    "duplex": "~1.0.0"
+    "duplex": "~1.0.0",
+    "redis-protocol-stream": "~0.1.4"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"

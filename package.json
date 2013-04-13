@@ -10,7 +10,7 @@
   "dependencies": {
     "xtend": "~1.0.3",
     "stream-serializer": "~1.0.0",
-    "through": "~2.1.0",
+    "through": "~2.3.1",
     "duplex": "~1.0.0",
     "redis-protocol-stream": "~0.1.4"
   },

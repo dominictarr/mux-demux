@@ -13,6 +13,7 @@
     "through": "~2.3.1",
     "duplex": "~1.0.0",
     "stream-combiner": "0.0.2",
+    "msgpack-stream": "0.0.1",
     "json-buffer": "~2.0.1"
   },
   "scripts": {
@@ -20,7 +21,6 @@
   },
   "devDependencies": {
     "event-stream": "~3.0.7",
-    "msgpack-stream": "0.0.1",
     "tape": "~0.2.2"
   },
   "testling": {

@@ -1,6 +1,6 @@
 {
   "name": "mux-demux",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "description": "multiplex streams",
   "homepage": "http://github.com/dominictarr/mux-demux",
   "repository": {

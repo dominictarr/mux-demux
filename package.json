@@ -1,7 +1,7 @@
 {
   "name": "mux-demux",
   "version": "3.7.1",
-  "description": "",
+  "description": "multiplex streams",
   "homepage": "http://github.com/dominictarr/mux-demux",
   "repository": {
     "type": "git",
@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "xtend": "~1.0.3",
-    "stream-serializer": "~1.1.0",
+    "stream-serializer": "~1.1.1",
     "through": "~2.3.1",
     "duplex": "~1.0.0",
     "stream-combiner": "0.0.2",
-    "json-buffer": "~1.0.0"
+    "json-buffer": "~2.0.1"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"

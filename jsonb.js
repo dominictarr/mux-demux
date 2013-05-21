@@ -3,6 +3,10 @@ var serializer = require('stream-serializer')
 
 var inject = require('./inject')
 
-module.exports = inject(function (stream) {
+function wrap (stream) {
   return serializer.json(stream, JSONB)
-})
+}
+
+module.exports = inject(wrap)
+
+module.exports.wrap = wrap

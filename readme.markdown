@@ -21,7 +21,7 @@ net.createServer(function (con) {
   })).pipe(con)
 }).listen(8642, function () {
   var con = net.connect(8642), mx
-  con.pipe(mx = MuxDemux).pipe(con)
+  con.pipe(mx = MuxDemux()).pipe(con)
 
   var ds = mx.createWriteStream('times')
 

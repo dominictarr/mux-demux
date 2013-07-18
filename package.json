@@ -14,7 +14,7 @@
     "duplex": "~1.0.0",
     "stream-combiner": "0.0.2",
     "msgpack-stream": "~0.0.3",
-    "json-buffer": "~2.0.1"
+    "json-buffer": "~2.0.4"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"

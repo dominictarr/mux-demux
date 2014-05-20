@@ -31,6 +31,15 @@ net.createServer(function (con) {
 })
 ```
 
+## Binary Support
+
+By encoding JSON as msgpack, binary is supported.
+just require from `mux-demux/msgpack` instead of `mux-demux`.
+
+``` js
+var MuxDemux = requrie('mux-demux/msgpack')
+```
+
 ## Gotchas
 
 take care to create a `MuxDemux` instance per connection,

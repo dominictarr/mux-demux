@@ -133,10 +133,15 @@ function MuxDemux (opts, onConnection) {
   }
 
   outer.close = function (cb) {
-    md.once('zero', function () {
+    var end = function() {
       md._end()
       if(cb) cb()
-    })
+    }
+    if(streamCount) {
+      md.once('zero', end)
+    } else {
+      end()
+    }
     return this
   }
 

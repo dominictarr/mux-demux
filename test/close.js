@@ -8,6 +8,10 @@ test('test close', function (a) {
 
   var mx = MuxDemux(), ended = false, callback = false
 
+  var A = mx.createStream()
+  var B = mx.createStream()
+  var C = mx.createStream()
+
   mx.on('end', function () {
     ended = true
   })
@@ -15,10 +19,6 @@ test('test close', function (a) {
   mx.close(function () {
     callback = true
   }) //end the mx stream after the sub-streams close.
-
-  var A = mx.createStream()
-  var B = mx.createStream()
-  var C = mx.createStream()
 
   a.equal(ended, false)
 

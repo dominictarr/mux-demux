@@ -153,7 +153,7 @@ function MuxDemux (opts, onConnection) {
     //then return an error to the other side.
     //still trying to think of the best error message.
     if(outer.listeners('connection').length === 1)
-      stream.error('remote end lacks connection listener ' 
+      stream.error('remote end lacks connection listener '
         + outer.listeners('connection').length)
   })
 

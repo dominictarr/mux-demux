@@ -49,7 +49,7 @@ do not connect many connections to one `MuxDemux'.
 
 ``` js
 net.createServer(function (stream) {
-  stream.pipe(MuxDemux(function (_stream) { 
+  stream.pipe(MuxDemux(function (_stream) {
 
   }).pipe(stream)
 }).listen(port)
@@ -63,6 +63,30 @@ net.createServer(function (stream) {
   stream.pipe(mx).pipe(stream)
 }).listen(port)
 ```
+### Right
+
+``` js
+var mx = MuxDemux()
+mx.close(function () {
+  console.log("connection close");
+})
+
+var A = mx.createStream()
+A.end()
+```
+
+### WRONG!
+``` js
+var mx = MuxDemux()
+
+var A = mx.createStream()
+A.end()
+
+mx.close(function () {
+  console.log("connection close");
+})
+```
+actually this will not close mx
 
 ### Errors, and use in PRODUCTION
 
@@ -108,21 +132,21 @@ if both sides are listening `on('connection',...)` then both sides may call `cre
 
 ### MuxDemux(options, onConnection)
 
-Creates a MuxDemux stream. Optionally pass in an options hash 
+Creates a MuxDemux stream. Optionally pass in an options hash
 
     {
         error: Boolean,
         wrapper: function (stream) {...}
     }
 
-If the error option is set to true  then MuxDemux will emit errors on the 
+If the error option is set to true  then MuxDemux will emit errors on the
 streams on unexpected disconnects. othewise, it will just emit 'end' on those streams.
 
 `wrapper` be used to change the serialization format used by `mux-demux`,
 by default, line seperated json is used. see examples [below](#wrapper_examples)
 both mux-demux end points must use the same wrapper.
 
-`options` is optional. `MuxDemux(onConnection)` is a shortcut 
+`options` is optional. `MuxDemux(onConnection)` is a shortcut
 for `MuxDemux().on('connection', onConnection)`
 
 ### createReadStream (meta)
@@ -142,7 +166,7 @@ open a `Stream` to the other side which is both readable and writable.
 returns a `Stream`, the other side will emit a `Stream` connected to this stream.
 
 opts may be `{allowHalfOpen: true}`, if this is not set, the stream will emit
-`'end'` when `end()` is called. this may cause the stream to loose some data 
+`'end'` when `end()` is called. this may cause the stream to loose some data
 from the other end. If `allowHalfOpen` is `true` then the remote end must call `end()`.
 
 > note to self, references to a class (`Stream`) should be capitalized, and in backticks.
@@ -152,10 +176,10 @@ from the other end. If `allowHalfOpen` is `true` then the remote end must call `
 ### close(cb)
 
 asks mux-demux to emit end once all the sub-streams have closed.
-this will wait untill they have ended, closed, or errored, just like 
+this will wait untill they have ended, closed, or errored, just like
 [`net.Server#close`](http://nodejs.org/api/net.html#net_server_close_cb).
 
-Takes an optional callback, and emits the 'end' event. 
+Takes an optional callback, and emits the 'end' event.
 
 ### Wrapper Examples
 
@@ -171,8 +195,8 @@ A stream of msgpack.
 var es = require('event-stream')
 var ms = require('msgpack-stream')
 
-new MuxDemux({wrapper: function (stream) { 
-  return es.pipeline(ms.createDecodeStream(), stream, ms.createEncodeStream()) 
+new MuxDemux({wrapper: function (stream) {
+  return es.pipeline(ms.createDecodeStream(), stream, ms.createEncodeStream())
 }})
 
 ```

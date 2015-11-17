@@ -37,7 +37,7 @@ By encoding JSON as msgpack, binary is supported.
 just require from `mux-demux/msgpack` instead of `mux-demux`.
 
 ``` js
-var MuxDemux = requrie('mux-demux/msgpack')
+var MuxDemux = require('mux-demux/msgpack')
 ```
 
 ## Gotchas
